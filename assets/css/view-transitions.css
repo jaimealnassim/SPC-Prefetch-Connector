@@ -1,0 +1,76 @@
+/**
+ * Nahnu Prefetch Connector - View Transitions
+ *
+ * Applied when the browser supports the View Transitions API.
+ * The ::view-transition-* pseudo-elements are injected by the browser
+ * when document.startViewTransition() is called.
+ *
+ * Two animation modes are available via data-nahnu-transition on <html>:
+ *   data-nahnu-transition="fade"  (default)
+ *   data-nahnu-transition="slide"
+ *
+ * Falls back gracefully in browsers without View Transitions support —
+ * the CSS simply never applies because the pseudo-elements never exist.
+ */
+
+/* ------------------------------------------------------------------
+   Base: shared timing for both modes
+   ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 160ms;
+	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------------
+   Fade (default)
+   Browser default is already a crossfade, but we shorten it and
+   make it feel crisper.
+   ------------------------------------------------------------------ */
+html[data-nahnu-transition="fade"] ::view-transition-old(root) {
+	animation-name: nahnu-fade-out;
+}
+html[data-nahnu-transition="fade"] ::view-transition-new(root) {
+	animation-name: nahnu-fade-in;
+}
+
+@keyframes nahnu-fade-out {
+	from { opacity: 1; }
+	to   { opacity: 0; }
+}
+@keyframes nahnu-fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+/* ------------------------------------------------------------------
+   Slide
+   Old page slides out to the left, new page slides in from the right.
+   ------------------------------------------------------------------ */
+html[data-nahnu-transition="slide"] ::view-transition-old(root) {
+	animation-name: nahnu-slide-out;
+}
+html[data-nahnu-transition="slide"] ::view-transition-new(root) {
+	animation-name: nahnu-slide-in;
+}
+
+@keyframes nahnu-slide-out {
+	from { transform: translateX(0);     opacity: 1; }
+	to   { transform: translateX(-6%);   opacity: 0; }
+}
+@keyframes nahnu-slide-in {
+	from { transform: translateX(6%);    opacity: 0; }
+	to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* ------------------------------------------------------------------
+   Respect prefers-reduced-motion.
+   Cut to zero duration — the transition still fires (so prerender
+   activation is seamless) but there is no visual movement.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: 0.01ms !important;
+	}
+}
