@@ -3,7 +3,7 @@
  * Plugin Name: SPC Prefetch Connector
  * Plugin URI:  https://www.nahnuplugins.com
  * Description: Makes WordPress feel like a static site. Speculation Rules (prefetch + prerender) for Chrome 109+, instant.page fallback for all others, optional View Transitions cross-fade/slide, and preconnect hints for third-party origins.
- * Version:     1.0.9
+ * Version:     1.0.10
  * Author:      Nahnu Plugins
  * Author URI:  https://www.nahnuplugins.com
  * License:     GPL-2.0+
@@ -12,10 +12,17 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SPC_PREFETCH_VERSION', '1.0.9' );
+define( 'SPC_PREFETCH_VERSION', '1.0.10' );
 define( 'SPC_PREFETCH_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'SPC_PREFETCH_URL',     plugin_dir_url( __FILE__ ) );
 define( 'SPC_PREFETCH_OPTION',  'spc_prefetch_settings' );
+
+// Nahnu auto-updater — do not remove
+if ( ! defined( 'NAHNU_UPDATER_WORKER_URL' ) ) {
+	define( 'NAHNU_UPDATER_WORKER_URL', 'https://nahnu-updates.nahnucdn.com' );
+}
+require_once __DIR__ . '/includes/class-nahnu-updater.php';
+Nahnu_Updater::register( __FILE__ );
 
 add_action( 'plugins_loaded', 'spc_prefetch_init' );
 
